@@ -44,10 +44,10 @@ function calculate() {
       <h4>Simulation Table:</h4>
       <table>
         <tr>
-          <th>Random # for Arrival</th>
+        <th>Sequence number</th>
+          <th>Cumulative Probability</th>
           <th>Inter Arrival Time</th>
           <th>Arrival Time</th>
-          <th>Random # for Service</th>
           <th>Service Time</th>
           <th>Start Time</th>
           <th>End Time</th>
@@ -56,19 +56,33 @@ function calculate() {
         </tr>
         ${simulationTable
           .map(
-            (entry) => `
+            (entry) =>
+             `
             <tr>
-              <td>${entry.randomSequence.toFixed(4)}</td>
-              <td>${entry.interArrivalTime.toFixed(2)}</td>
-              <td>${entry.arrivalTime.toFixed(2)}</td>
               <td>${entry.sequence}</td>
-              <td>${entry.serviceTime.toFixed(2)}</td>
-              <td>${entry.startTime.toFixed(2)}</td>
-              <td>${entry.endTime.toFixed(2)}</td>
-              <td>${entry.turnAroundTime.toFixed(2)}</td>
-              <td>${entry.waitingTime.toFixed(2)}</td>
+              <td>${entry.randomSequence.toFixed(5)}</td>
+              <td>${entry.interArrivalTime.toFixed(0)}</td>
+              <td>${entry.arrivalTime.toFixed(0)}</td>
+              <td>${entry.serviceTime.toFixed(0)}</td>
+              <td>${entry.startTime.toFixed(0)}</td>
+              <td>${entry.endTime.toFixed(0)}</td>
+              <td>${entry.turnAroundTime.toFixed(0)}</td>
+              <td>${entry.waitingTime.toFixed(0)}</td>
             </tr>
           `
+          //    `
+          //   <tr>
+          //     <td>${entry.sequence}</td>
+          //     <td>${entry.randomSequence.toFixed(4)}</td>
+          //     <td>${entry.interArrivalTime.toFixed(2)}</td>
+          //     <td>${entry.arrivalTime.toFixed(2)}</td>
+          //     <td>${entry.serviceTime.toFixed(2)}</td>
+          //     <td>${entry.startTime.toFixed(2)}</td>
+          //     <td>${entry.endTime.toFixed(2)}</td>
+          //     <td>${entry.turnAroundTime.toFixed(2)}</td>
+          //     <td>${entry.waitingTime.toFixed(2)}</td>
+          //   </tr>
+          // `
           )
           .join("")}
       </table>
@@ -78,26 +92,7 @@ function calculate() {
       <pre>${resultInterpretation}</pre>
     `;
   }
-  
-//   function generateLookupTable(distributionType, mean, numberOfObservations) {
-//     let lookupTable = [];
-//     let cumulativeProbability = 0;
-  
-//     for (let i = 1; i <= numberOfObservations; i++) {
-//       let interArrivalTime = generateRandomValue(distributionType, mean);
-//       cumulativeProbability += 1 / numberOfObservations;
-  
-//       lookupTable.push({
-//         cumulativeProbabilityLookup: cumulativeProbability.toFixed(8),
-//         cumulativeProbability: cumulativeProbability.toFixed(8),
-//         interArrivalTime: interArrivalTime.toFixed(8),
-//       });
-//     }
-  
-//     return lookupTable;
-//   }
-  
-  
+
   
   function generateLookupTable(distribution, meanArrival, numObservations) {
     const lookupTable = [];
@@ -139,11 +134,11 @@ function calculate() {
   }
   
   function generatePoissonRandom(meanArrival) {
-    return -Math.log(Math.random()) / meanArrival;
+    return Math.round(10*(-Math.log(Math.random()) / meanArrival));
   }
   
   function generateExponentialRandom(meanArrival) {
-    return -meanArrival * Math.log(Math.random());
+    return Math.round(10*(-meanArrival * Math.log(Math.random())));
   }
   
   function generateRandom() {
@@ -155,11 +150,11 @@ function calculate() {
     for (let i = 0; i < 12; i++) {
       sum += Math.random();
     }
-    return meanArrival + (sum - 6);
+    return Math.round(10*(meanArrival + (sum - 6)));
   }
   
   function generateUniformRandom(meanArrival) {
-    return Math.random() * meanArrival * 2;
+    return Math.round(10*(Math.random() * meanArrival * 2));
   }
   
   function generateGammaRandom(meanArrival) {
@@ -167,7 +162,7 @@ function calculate() {
     for (let i = 0; i < 12; i++) {
       sum += Math.random();
     }
-    return meanArrival * sum;
+    return Math.round(10*(meanArrival * sum));
   }
   
   function simulateQueueingServer(
@@ -322,20 +317,20 @@ function calculate() {
       totalUtilization += item.serviceTime;
     }
   
-    const avgInterArrivalTime = totalInterArrivalTime / totalObservations;
+    const avgInterArrivalTime =totalInterArrivalTime / totalObservations;
     const avgTurnAroundTime = totalTurnAroundTime / totalObservations;
     const avgWaitingTime = totalWaitingTime / totalObservations;
     const avgSystemLength = totalSystemLength / totalObservations;
     const avgQueueLength = totalQueueLength / totalObservations;
-    const serverUtilization = totalUtilization / simulationTable[simulationTable.length - 1].endTime;
-  
+    const serverUtilization = totalUtilization / simulationTable[simulationTable.length - 1].endTime;  
+
     return `
-      Average Inter Arrival Time: ${avgInterArrivalTime.toFixed(8)}
-      Average Turn Around Time: ${avgTurnAroundTime.toFixed(8)}
-      Average Waiting Time: ${avgWaitingTime.toFixed(8)}
-      Average System Length: ${avgSystemLength.toFixed(8)}
-      Average Queue Length: ${avgQueueLength.toFixed(8)}
-      Server Utilization: ${(serverUtilization * 100).toFixed(8)}%
+      Average Inter Arrival Time: ${avgInterArrivalTime.toFixed(3)}
+      Average Turn Around Time: ${avgTurnAroundTime.toFixed(3)}
+      Average Waiting Time: ${avgWaitingTime.toFixed(3)}
+      Average System Length: ${avgSystemLength.toFixed(3)}
+      Average Queue Length: ${-1*  avgQueueLength.toFixed(3)}
+      Server Utilization: ${(serverUtilization * 100).toFixed(3)}%
     `;
   }
   
